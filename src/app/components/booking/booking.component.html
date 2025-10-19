@@ -1,0 +1,133 @@
+<div class="booking-container">
+  <button class="back-button" (click)="goBack()">← Back</button>
+
+  @if (apartment) {
+    <div class="booking-content">
+      <div class="booking-form-section">
+        <h1>Complete Your Booking</h1>
+
+        <div class="apartment-summary">
+          <img [src]="apartment.mainImage || 'https://via.placeholder.com/100x100'" 
+               [alt]="apartment.title">
+          <div>
+            <h3>{{ apartment.title }}</h3>
+            <p>📍 {{ apartment.city }}, {{ apartment.country }}</p>
+          </div>
+        </div>
+
+        <form (ngSubmit)="onSubmit()" class="booking-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="checkIn">Check-in Date</label>
+              <input
+                type="date"
+                id="checkIn"
+                name="checkIn"
+                [(ngModel)]="checkIn"
+                (change)="calculateTotal()"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="checkOut">Check-out Date</label>
+              <input
+                type="date"
+                id="checkOut"
+                name="checkOut"
+                [(ngModel)]="checkOut"
+                (change)="calculateTotal()"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="guests">Number of Guests</label>
+            <select
+              id="guests"
+              name="guests"
+              [(ngModel)]="guests"
+              required
+            >
+              @for (i of [1,2,3,4,5,6,7,8]; track i) {
+                @if (i <= apartment.maxGuests) {
+                  <option [value]="i">{{ i }} {{ i === 1 ? 'Guest' : 'Guests' }}</option>
+                }
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="specialRequests">Special Requests (Optional)</label>
+            <textarea
+              id="specialRequests"
+              name="specialRequests"
+              [(ngModel)]="specialRequests"
+              rows="4"
+              placeholder="Any special requests or requirements?"
+            ></textarea>
+          </div>
+
+          @if (errorMessage) {
+            <div class="error-message">
+              {{ errorMessage }}
+            </div>
+          }
+
+          @if (successMessage) {
+            <div class="success-message">
+              {{ successMessage }}
+            </div>
+          }
+
+          <button type="submit" class="btn-primary" [disabled]="isLoading">
+            @if (isLoading) {
+              <span>Processing...</span>
+            } @else {
+              <span>Confirm Booking</span>
+            }
+          </button>
+        </form>
+      </div>
+
+      <div class="price-summary">
+        <h2>Price Details</h2>
+        
+        <div class="summary-row">
+          <span>{{ apartment.currency }} {{ apartment.price }} × {{ nights }} nights</span>
+          <span>{{ apartment.currency }} {{ apartment.price * nights }}</span>
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <div class="summary-row total">
+          <span>Total</span>
+          <span>{{ apartment.currency }} {{ totalPrice }}</span>
+        </div>
+
+        <div class="booking-info">
+          <h3>What's Included</h3>
+          <ul>
+            <li>✓ {{ apartment.bedrooms }} Bedrooms</li>
+            <li>✓ {{ apartment.bathrooms }} Bathrooms</li>
+            <li>✓ Up to {{ apartment.maxGuests }} guests</li>
+            @for (amenity of apartment.amenities?.slice(0, 3); track amenity) {
+              <li>✓ {{ amenity }}</li>
+            }
+          </ul>
+        </div>
+
+        <div class="cancellation-policy">
+          <h3>Cancellation Policy</h3>
+          <p>Free cancellation for 48 hours. After that, cancel up to 7 days before check-in and get a 50% refund.</p>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Loading...</p>
+    </div>
+  }
+</div>

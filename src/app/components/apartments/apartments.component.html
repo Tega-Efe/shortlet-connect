@@ -1,0 +1,47 @@
+<div class="apartments-container">
+  <div class="hero-section">
+    <h1>Find Your Perfect Stay</h1>
+    <p>Discover amazing apartments for your next adventure</p>
+  </div>
+
+  @if (isLoading) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Loading apartments...</p>
+    </div>
+  } @else {
+    @if (apartments.length === 0) {
+      <div class="empty-state">
+        <h2>No apartments available</h2>
+        <p>Check back later for new listings</p>
+      </div>
+    } @else {
+      <div class="apartments-grid">
+        @for (apartment of apartments; track apartment.id) {
+          <div class="apartment-card" (click)="viewApartment(apartment.id)">
+            <div class="card-image">
+              <img [src]="apartment.mainImage || 'https://via.placeholder.com/400x300?text=Apartment'" 
+                   [alt]="apartment.title">
+              <div class="card-badge">{{ apartment.currency }} {{ apartment.price }}/night</div>
+            </div>
+            <div class="card-content">
+              <h3>{{ apartment.title }}</h3>
+              <p class="location">📍 {{ apartment.city }}, {{ apartment.country }}</p>
+              <div class="card-details">
+                <span>🛏️ {{ apartment.bedrooms }} Beds</span>
+                <span>🚿 {{ apartment.bathrooms }} Baths</span>
+                <span>👥 {{ apartment.maxGuests }} Guests</span>
+              </div>
+              @if (apartment.rating) {
+                <div class="rating">
+                  <span class="stars">⭐ {{ apartment.rating }}</span>
+                  <span class="reviews">({{ apartment.reviewCount || 0 }} reviews)</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

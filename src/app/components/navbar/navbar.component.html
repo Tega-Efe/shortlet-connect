@@ -1,0 +1,38 @@
+<nav class="navbar">
+  <div class="navbar-container">
+    <a routerLink="/" class="logo">
+      🏠 Shortlet
+    </a>
+
+    <button class="menu-toggle" (click)="toggleMenu()" [class.active]="isMenuOpen">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <div class="nav-menu" [class.active]="isMenuOpen">
+      @if (user$ | async; as user) {
+        <a routerLink="/apartments" routerLinkActive="active" class="nav-link" (click)="toggleMenu()">
+          Browse
+        </a>
+        <a routerLink="/my-bookings" routerLinkActive="active" class="nav-link" (click)="toggleMenu()">
+          My Bookings
+        </a>
+        <div class="nav-user">
+          <span class="user-name">{{ user.displayName || user.email }}</span>
+          <button class="btn-signout" (click)="signOut()">Sign Out</button>
+        </div>
+      } @else {
+        <a routerLink="/apartments" routerLinkActive="active" class="nav-link" (click)="toggleMenu()">
+          Browse
+        </a>
+        <a routerLink="/login" routerLinkActive="active" class="nav-link" (click)="toggleMenu()">
+          Sign In
+        </a>
+        <a routerLink="/register" class="btn-signup" (click)="toggleMenu()">
+          Sign Up
+        </a>
+      }
+    </div>
+  </div>
+</nav>

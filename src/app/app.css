@@ -1,8 +1,1 @@
-.app-container {
-  padding: 20px;
-  font-family: Arial, sans-serif;
-}
-
-h1 {
-  color: #333;
-}
+/* App styles are now minimal since navbar and components have their own styles */

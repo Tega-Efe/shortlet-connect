@@ -1,0 +1,70 @@
+<div class="bookings-container">
+  <h1>My Bookings</h1>
+
+  @if (isLoading) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Loading your bookings...</p>
+    </div>
+  } @else {
+    @if (bookings.length === 0) {
+      <div class="empty-state">
+        <h2>No bookings yet</h2>
+        <p>Start exploring and book your first stay!</p>
+        <a routerLink="/apartments" class="btn-primary">Browse Apartments</a>
+      </div>
+    } @else {
+      <div class="bookings-list">
+        @for (booking of bookings; track booking.id) {
+          <div class="booking-card">
+            <div class="booking-header">
+              <div>
+                <h3>{{ booking.apartmentTitle }}</h3>
+                <span class="status-badge" [ngClass]="getStatusClass(booking.status)">
+                  {{ booking.status }}
+                </span>
+              </div>
+            </div>
+
+            <div class="booking-details">
+              <div class="detail-row">
+                <span class="label">Check-in:</span>
+                <span class="value">{{ booking.checkIn | date:'mediumDate' }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Check-out:</span>
+                <span class="value">{{ booking.checkOut | date:'mediumDate' }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Guests:</span>
+                <span class="value">{{ booking.guests }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Total Price:</span>
+                <span class="value price">$ {{ booking.totalPrice }}</span>
+              </div>
+              @if (booking.specialRequests) {
+                <div class="detail-row">
+                  <span class="label">Special Requests:</span>
+                  <span class="value">{{ booking.specialRequests }}</span>
+                </div>
+              }
+              <div class="detail-row">
+                <span class="label">Booked on:</span>
+                <span class="value">{{ booking.createdAt | date:'short' }}</span>
+              </div>
+            </div>
+
+            @if (booking.status === 'pending' || booking.status === 'confirmed') {
+              <div class="booking-actions">
+                <button class="btn-cancel" (click)="cancelBooking(booking.id)">
+                  Cancel Booking
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

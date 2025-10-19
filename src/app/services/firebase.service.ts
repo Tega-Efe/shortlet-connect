@@ -1,24 +1,46 @@
 import { Injectable, inject } from '@angular/core';
-import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, user } from '@angular/fire/auth';
-import { Firestore, collection, addDoc, collectionData, doc, updateDoc, deleteDoc } from '@angular/fire/firestore';
+import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, user, updateProfile, User } from '@angular/fire/auth';
+import { Firestore, collection, addDoc, collectionData, doc, updateDoc, deleteDoc, setDoc, getDoc, query, where, getDocs } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
-export class FirebaseService {
+export class AuthService {
   private auth: Auth = inject(Auth);
   private firestore: Firestore = inject(Firestore);
+  private router: Router = inject(Router);
   
   // Get current user as observable
   user$ = user(this.auth);
+  currentUser: User | null = null;
 
-  constructor() { }
+  constructor() {
+    this.user$.subscribe(user => {
+      this.currentUser = user;
+    });
+  }
 
   // Authentication Methods
-  async signUp(email: string, password: string) {
+  async signUp(email: string, password: string, displayName: string) {
     try {
       const credential = await createUserWithEmailAndPassword(this.auth, email, password);
+      
+      // Update profile with display name
+      if (credential.user) {
+        await updateProfile(credential.user, { displayName });
+        
+        // Create user document in Firestore
+        await setDoc(doc(this.firestore, 'users', credential.user.uid), {
+          uid: credential.user.uid,
+          email: email,
+          displayName: displayName,
+          createdAt: new Date(),
+          role: 'user'
+        });
+      }
+      
       return credential;
     } catch (error) {
       console.error('Error signing up:', error);
@@ -36,49 +58,27 @@ export class FirebaseService {
     }
   }
 
-  async signOutUser() {
+  async signOut() {
     try {
       await signOut(this.auth);
+      this.router.navigate(['/login']);
     } catch (error) {
       console.error('Error signing out:', error);
       throw error;
     }
   }
 
-  // Firestore Methods
-  async addDocument(collectionName: string, data: any) {
+  async getUserProfile(uid: string) {
     try {
-      const colRef = collection(this.firestore, collectionName);
-      const docRef = await addDoc(colRef, data);
-      return docRef.id;
+      const userDoc = await getDoc(doc(this.firestore, 'users', uid));
+      return userDoc.exists() ? userDoc.data() : null;
     } catch (error) {
-      console.error('Error adding document:', error);
+      console.error('Error getting user profile:', error);
       throw error;
     }
   }
 
-  getCollection(collectionName: string): Observable<any[]> {
-    const colRef = collection(this.firestore, collectionName);
-    return collectionData(colRef, { idField: 'id' });
-  }
-
-  async updateDocument(collectionName: string, docId: string, data: any) {
-    try {
-      const docRef = doc(this.firestore, collectionName, docId);
-      await updateDoc(docRef, data);
-    } catch (error) {
-      console.error('Error updating document:', error);
-      throw error;
-    }
-  }
-
-  async deleteDocument(collectionName: string, docId: string) {
-    try {
-      const docRef = doc(this.firestore, collectionName, docId);
-      await deleteDoc(docRef);
-    } catch (error) {
-      console.error('Error deleting document:', error);
-      throw error;
-    }
+  isLoggedIn(): boolean {
+    return this.currentUser !== null;
   }
 }

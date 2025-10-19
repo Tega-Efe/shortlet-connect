@@ -1,0 +1,97 @@
+<div class="detail-container">
+  @if (isLoading) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Loading apartment details...</p>
+    </div>
+  } @else if (apartment) {
+    <button class="back-button" (click)="goBack()">← Back to Listings</button>
+
+    <div class="detail-content">
+      <div class="image-gallery">
+        <div class="main-image">
+          <img [src]="apartment.mainImage || 'https://via.placeholder.com/800x600?text=Apartment'" 
+               [alt]="apartment.title">
+        </div>
+      </div>
+
+      <div class="info-section">
+        <div class="header">
+          <div>
+            <h1>{{ apartment.title }}</h1>
+            <p class="location">📍 {{ apartment.address }}, {{ apartment.city }}, {{ apartment.country }}</p>
+          </div>
+          @if (apartment.rating) {
+            <div class="rating">
+              <span class="stars">⭐ {{ apartment.rating }}</span>
+              <span class="reviews">({{ apartment.reviewCount || 0 }} reviews)</span>
+            </div>
+          }
+        </div>
+
+        <div class="quick-info">
+          <div class="info-item">
+            <span class="icon">🛏️</span>
+            <span>{{ apartment.bedrooms }} Bedrooms</span>
+          </div>
+          <div class="info-item">
+            <span class="icon">🚿</span>
+            <span>{{ apartment.bathrooms }} Bathrooms</span>
+          </div>
+          <div class="info-item">
+            <span class="icon">👥</span>
+            <span>{{ apartment.maxGuests }} Guests</span>
+          </div>
+        </div>
+
+        <div class="description">
+          <h2>About this place</h2>
+          <p>{{ apartment.description }}</p>
+        </div>
+
+        @if (apartment.amenities && apartment.amenities.length > 0) {
+          <div class="amenities">
+            <h2>Amenities</h2>
+            <div class="amenities-grid">
+              @for (amenity of apartment.amenities; track amenity) {
+                <div class="amenity-item">✓ {{ amenity }}</div>
+              }
+            </div>
+          </div>
+        }
+
+        <div class="host-info">
+          <h2>Hosted by</h2>
+          <p>{{ apartment.hostName }}</p>
+        </div>
+      </div>
+
+      <div class="booking-card">
+        <div class="price">
+          <span class="amount">{{ apartment.currency }} {{ apartment.price }}</span>
+          <span class="period">/ night</span>
+        </div>
+        
+        @if (apartment.available) {
+          <button class="book-button" (click)="bookNow()">
+            {{ isLoggedIn ? 'Book Now' : 'Sign in to Book' }}
+          </button>
+          <p class="booking-note">You won't be charged yet</p>
+        } @else {
+          <button class="book-button disabled" disabled>Not Available</button>
+        }
+
+        <div class="booking-features">
+          <div class="feature">✓ Free cancellation for 48 hours</div>
+          <div class="feature">✓ Best price guarantee</div>
+          <div class="feature">✓ Instant booking confirmation</div>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="error-state">
+      <h2>Apartment not found</h2>
+      <button class="back-button" (click)="goBack()">← Back to Listings</button>
+    </div>
+  }
+</div>
