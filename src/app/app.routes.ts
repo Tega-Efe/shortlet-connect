@@ -8,6 +8,10 @@ export const routes: Routes = [
     pathMatch: 'full'
   },
   {
+    path: 'add-sample-data',
+    loadComponent: () => import('./components/add-sample-data/add-sample-data.component').then(m => m.AddSampleDataComponent)
+  },
+  {
     path: 'login',
     loadComponent: () => import('./components/login/login.component').then(m => m.LoginComponent)
   },
