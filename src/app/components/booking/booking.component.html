@@ -112,7 +112,7 @@
             <li>✓ {{ apartment.bedrooms }} Bedrooms</li>
             <li>✓ {{ apartment.bathrooms }} Bathrooms</li>
             <li>✓ Up to {{ apartment.maxGuests }} guests</li>
-            @for (amenity of apartment.amenities?.slice(0, 3); track amenity) {
+            @for (amenity of (apartment.amenities || []).slice(0, 3); track amenity) {
               <li>✓ {{ amenity }}</li>
             }
           </ul>

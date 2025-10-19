@@ -7,7 +7,7 @@ import { Apartment } from '../../models/models';
 
 @Component({
   selector: 'app-apartment-detail',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './apartment-detail.component.html',
   styleUrl: './apartment-detail.component.css'
 })
